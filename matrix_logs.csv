@@ -1,0 +1,24 @@
+TIMESTAMP,LOCATION,LOAD (%),DELAY (MIN),BURN_RATE (NGN),STATUS
+2026-02-02 22:18:14,"Lekki-Epe Expressway, Lagos, Lagos",21%,6,161856382.98,✅ Verified
+2026-02-02 22:19:02,"Ikorodu Road, Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:23:02,"Lekki-Epe Expressway, Lagos, Lagos",21%,6,161856382.98,✅ Verified
+2026-02-02 22:23:08,"Ikorodu Road, Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:23:13,"Third Mainland Bridge, Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:23:18,"Apapa-Oshodi Expressway, Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:23:23,"Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:23:29,"Ozumba Mbadiwe Avenue, Lagos, Lagos",28%,5,197943750.00,✅ Verified
+2026-02-02 22:25:34,"Lekki-Epe Expressway, Lagos, Lagos",21%,6,161856382.98,✅ Verified
+2026-02-02 22:25:39,"Ikorodu Road, Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:25:44,"Third Mainland Bridge, Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:25:50,"Apapa-Oshodi Expressway, Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:25:55,"Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:26:00,"Ozumba Mbadiwe Avenue, Lagos, Lagos",28%,5,197943750.00,✅ Verified
+2026-02-02 22:52:08,"Lekki-Epe Expressway, Lagos, Lagos",21%,6,161856382.98,✅ Verified
+2026-02-02 22:52:13,"Ikorodu Road, Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:52:18,"Ozumba Mbadiwe Avenue, Lagos, Lagos",28%,5,197943750.00,✅ Verified
+2026-02-02 22:53:39,"Lekki-Epe Expressway, Lagos, Lagos",21%,6,161856382.98,✅ Verified
+2026-02-02 22:53:44,"Ikorodu Road, Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:53:49,"Ozumba Mbadiwe Avenue, Lagos, Lagos",28%,5,197943750.00,✅ Verified
+2026-02-02 22:55:10,"Lekki-Epe Expressway, Lagos, Lagos",21%,6,161856382.98,✅ Verified
+2026-02-02 22:55:15,"Ikorodu Road, Lagos, Lagos",0%,0,0.00,✅ Verified
+2026-02-02 22:55:20,"Ozumba Mbadiwe Avenue, Lagos, Lagos",28%,5,197943750.00,✅ Verified
