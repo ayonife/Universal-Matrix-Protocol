@@ -21,20 +21,59 @@ st.set_page_config(
     initial_sidebar_state="collapsed" # Collapsed makes it cleaner on mobile
 )
 
-# CYBERPUNK CSS (Mobile Optimized)
+# --- CYBERPUNK HUD STYLING ---
 st.markdown("""
     <style>
-    .stApp {background-color: #0e1117;}
-    div[data-testid="stMetricValue"] {color: #ff4444; font-family: 'Courier New', monospace;}
+    /* 1. MAIN TERMINAL BACKGROUND */
+    .stApp {
+        background-color: #050505; /* Void Black */
+        color: #00ff41; /* Matrix Green Text */
+        font-family: 'Courier New', monospace;
+    }
+
+    /* 2. GLOWING METRIC BOXES */
+    div[data-testid="stMetric"] {
+        background-color: #111;
+        border: 1px solid #333;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 255, 65, 0.2); /* Green Glow */
+    }
+
+    /* 3. TEXT COLORS FOR METRICS */
+    div[data-testid="stMetricValue"] {
+        font-size: 36px;
+        color: #ffffff;
+        text-shadow: 0 0 5px #ffffff;
+    }
     
-    /* Bigger Tabs for Fingers */
+    div[data-testid="stMetricLabel"] {
+        color: #00ff41; /* Green Labels */
+        font-weight: bold;
+    }
+
+    /* 4. RED ALERT STYLE (For Panic/Blackouts) */
+    .css-1wivap2 { 
+        /* This targets negative deltas, turning them Neon Red */
+        color: #ff0055 !important;
+        text-shadow: 0 0 10px #ff0055;
+    }
+
+    /* 5. TABS AS PHYSICAL BUTTONS */
     button[data-baseweb="tab"] {
-        font-size: 20px;
-        margin: 0 10px;
+        background-color: #1a1a1a;
+        color: #00ff41;
+        border: 1px solid #00ff41;
+        margin: 0 5px;
+        border-radius: 3px;
+    }
+    button[data-baseweb="tab"]:hover {
+        background-color: #00ff41;
+        color: #000;
+        box-shadow: 0 0 15px #00ff41;
     }
     </style>
     """, unsafe_allow_html=True)
-
 # --- INITIALIZE AGENTS ---
 @st.cache_resource
 def load_agents():
