@@ -14,8 +14,8 @@ class OracleCore:
             [0.4,  0.0, -0.5,  0.8]
         ])
 
-    # RENAMED FUNCTION: This forces the server to update
-    def sync_matrix(self, t_data, f_data, e_data, b_data):
+    # REVERTED NAME: Standard 'sync_senses' with 4 arguments
+    def sync_senses(self, t_data, f_data, e_data, b_data):
         t = t_data.get('congestion', 0)
         f = f_data.get('panic_score', 0) / 100.0
         e = 1.0 if e_data.get('status') == "GRID ACTIVE" else 0.0

@@ -31,10 +31,16 @@ st.markdown("""
 def load_agents():
     return SatelliteUplink(), EconomicMatrix(), FinancialOracle(), EnergyGrid(), OracleCore(), NewsAgent(), BioMonitor()
 
-grok, deepseek, midas, nepa, oracle, news_bot, bio_bot = load_agents()
-
 # --- COMMAND CENTER ---
 st.sidebar.title("🎛️ COMMAND CENTER")
+
+# *** THE FIX: MEMORY WIPE BUTTON ***
+if st.sidebar.button("⚠️ RESET BRAIN MEMORY"):
+    st.cache_resource.clear()
+    st.rerun()
+
+grok, deepseek, midas, nepa, oracle, news_bot, bio_bot = load_agents()
+
 scan_mode = st.sidebar.radio("MODE", ["SENTINEL (Auto)", "MANUAL SCAN"])
 target_input = st.sidebar.text_input("TARGET", "Lekki-Epe")
 manual_blackout = st.sidebar.checkbox("🚨 REPORT BLACKOUT")
@@ -54,9 +60,8 @@ tab_traffic, tab_finance, tab_energy, tab_sim = st.tabs(["🚦 TRAFFIC", "💰 F
 with tab_traffic:
     traffic_header = st.empty()
     col1, col2 = st.columns(2)
-    with col1: traffic_load = st.empty() # Congestion + Cars
-    with col2: traffic_burn = st.empty() # Money Lost
-    
+    with col1: traffic_load = st.empty()
+    with col2: traffic_burn = st.empty()
     st.caption(":: LIVE SATELLITE FEED ::")
     map_display = st.empty()
 
@@ -86,22 +91,19 @@ if st.button("🚀 RELOAD SYSTEM"):
         try:
             target = target_input if scan_mode == "MANUAL SCAN" else "Lekki-Epe"
             found_lat, found_lng, addr = grok.find_coordinates(target + " Lagos")
-            
             if found_lat: 
                 lat, lng = found_lat, found_lng
                 t_data = grok.get_traffic_data(lat, lng)
             
-            # CALCULATE CARS & MONEY
+            # CARS & MONEY
             loss = deepseek.compute_precise_loss(target, t_data.get('congestion',0), fuel_price)
-            
             traffic_header.info(f"📍 {addr}")
             traffic_load.metric("CONGESTION", f"{int(t_data.get('congestion',0)*100)}%", delta=f"{loss['cars_stuck']:,} Cars Stuck")
             traffic_burn.metric("MONEY BURN", f"₦ {loss['total_burn']:,.0f}/hr", delta="Wasted Fuel", delta_color="inverse")
             
-            # MAP (Force Draw)
+            # MAP
             map_data = pd.DataFrame({'lat': [lat], 'lon': [lng]})
             map_display.map(map_data, zoom=12, size=60, color="#00ff41")
-            
         except Exception as e:
             traffic_header.error(f"Traffic Signal Lost: {e}")
 
@@ -111,7 +113,6 @@ if st.button("🚀 RELOAD SYSTEM"):
             real_panic = news['panic_factor'] * 100
             bio = bio_bot.get_vital_signs()
             b_data = bio 
-            
             finance_price.metric("BTC Price", "LOADING...")
             finance_panic.metric("PANIC SCORE", f"{real_panic:.0f}%", delta=news['headline'][:20])
             f_data = {'panic_score': real_panic}
@@ -129,8 +130,8 @@ if st.button("🚀 RELOAD SYSTEM"):
 
         # 4. ORACLE (BRAIN)
         try:
-            # CALLING THE NEW FUNCTION NAME: sync_matrix
-            current_vector = oracle.sync_matrix(t_data, f_data, e_data, b_data)
+            # BACK TO 'sync_senses' (Server will recognize this once cache is cleared)
+            current_vector = oracle.sync_senses(t_data, f_data, e_data, b_data)
             health = oracle.get_system_health()
             
             system_health.metric("SYSTEM INTEGRITY", f"{health:.1f}%", delta="Live Pulse")
