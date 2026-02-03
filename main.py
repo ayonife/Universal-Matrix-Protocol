@@ -5,7 +5,8 @@ from core.safety import SafetyProtocol
 from core.writer import PropagandaEngine
 from core.memory import BlackBox
 from core.midas import FinancialOracle
-import interface.dashboard as ui  # <--- THIS WAS MISSING. I ADDED IT BACK.
+from core.hermes import Messenger      # <--- NEW AGENT CONNECTED
+import interface.dashboard as ui
 
 # System Colors
 CYAN = "\033[96m"
@@ -14,90 +15,98 @@ RED = "\033[91m"
 YELLOW = "\033[93m"
 RESET = "\033[0m"
 
-# 🎯 THE HYBRID TARGET LIST
+# 🎯 THE SENTINEL WATCH LIST
 SECTORS = [
     {"type": "traffic", "id": "Lekki-Epe Expressway"},
-    {"type": "traffic", "id": "Ikorodu Road"},
     {"type": "traffic", "id": "Ozumba Mbadiwe Avenue"},
-    {"type": "finance", "id": "GC=F"},    # Gold Futures
     {"type": "finance", "id": "BTC-USD"}, # Bitcoin
-    {"type": "finance", "id": "NGN=X"}    # Naira vs Dollar
+    {"type": "finance", "id": "GC=F"}     # Gold
 ]
 
-def activate_sentinel():
-    # Initialize The Swarm
-    grok = SatelliteUplink()
-    deepseek = EconomicMatrix()
-    kimi = SafetyProtocol()
-    claude = PropagandaEngine()
-    recorder = BlackBox()
-    midas = FinancialOracle()
-    
-    print(f"{CYAN}:: UNIVERSAL MATRIX PROTOCOL (HYBRID SENTINEL) ::{RESET}")
-    print(f"{GREEN}✔ TRAFFIC & FINANCIAL SENSORS ACTIVE.{RESET}\n")
-    
-    while True:
-        try:
-            for target in SECTORS:
-                
-                # ==========================================
-                # MODE A: TRAFFIC SCANS
-                # ==========================================
-                if target['type'] == 'traffic':
-                    print(f"{CYAN}📡 SCANNING SECTOR: '{target['id'].upper()}'...{RESET}")
-                    
-                    # 1. Search
-                    search_term = target['id'] if "lagos" in target['id'].lower() else target['id'] + " Lagos"
-                    lat, lng, address = grok.find_coordinates(search_term) 
-                    
-                    if lat:
-                        # 2. Analyze
-                        data = grok.get_traffic_data(lat, lng)
-                        loss = deepseek.compute_loss_vector(data['congestion'], data['delay_seconds']/60)
-                        security = kimi.validate_data(data, loss)
-                        
-                        # 3. Visualize
-                        ui.render_matrix(address, data['congestion'], data['delay_seconds'], loss, security)
-                        
-                        # 4. Save to CSV
-                        print(f"\n{CYAN}💾 LOGGING TRAFFIC EVENT...{RESET}")
-                        recorder.log_event(address, data['congestion'], data['delay_seconds'], loss, security['msg'])
-                        
-                        # 5. Propaganda
-                        tweet, _, _ = claude.generate_report(address, loss, data['delay_seconds'])
-                        print(f"{CYAN}🐦 CONTENT GENERATED{RESET}")
+# Initialize The Swarm
+grok = SatelliteUplink()
+deepseek = EconomicMatrix()
+kimi = SafetyProtocol()
+claude = PropagandaEngine()
+recorder = BlackBox()
+midas = FinancialOracle()
+hermes = Messenger()          # <--- HERMES IS ONLINE
 
-                    else:
-                        print(f"❌ {RED}SECTOR NOT FOUND: {target['id']}{RESET}")
-
-                # ==========================================
-                # MODE B: FINANCIAL SCANS
-                # ==========================================
-                elif target['type'] == 'finance':
-                    print(f"{YELLOW}💰 ANALYZING MARKET: {target['id']}...{RESET}")
-                    
-                    market_data = midas.get_asset_health(target['id'])
-                    
-                    if market_data:
-                        # Display Financial Dashboard
-                        print(f"   {GREEN}Price:{RESET}       ${market_data['price']:,.2f}")
-                        print(f"   {GREEN}Volatility:{RESET}  {market_data['volatility']:.4f}%")
-                        print(f"   {GREEN}Panic Score:{RESET} {market_data['panic_score']:.1f}%")
-                        
-                        # Color code the status
-                        status_color = RED if "CRASH" in market_data['status'] else GREEN
-                        print(f"   {GREEN}Status:{RESET}      {status_color}{market_data['status']}{RESET}")
-                
-                # PAUSE between targets
-                print(f"\n{GREEN}>> NEXT SCAN IN 5s...{RESET}")
-                time.sleep(5)
+def scan_traffic(target_name):
+    print(f"{CYAN}📡 SCANNING SECTOR: '{target_name.upper()}'...{RESET}")
+    search_term = target_name if "lagos" in target_name.lower() else target_name + " Lagos"
+    lat, lng, address = grok.find_coordinates(search_term) 
+    
+    if lat:
+        data = grok.get_traffic_data(lat, lng)
+        loss = deepseek.compute_loss_vector(data['congestion'], data['delay_seconds']/60)
+        security = kimi.validate_data(data, loss)
+        
+        ui.render_matrix(address, data['congestion'], data['delay_seconds'], loss, security)
+        recorder.log_event(address, data['congestion'], data['delay_seconds'], loss, security['msg'])
+        
+        # 🚨 TRIGGER: HIGH TRAFFIC ALERT
+        if data['congestion'] > 0.80: # If traffic is over 80%
+            msg = (f"🚨 *GRIDLOCK ALERT*\n"
+                   f"📍 {target_name}\n"
+                   f"🚦 Load: {int(data['congestion']*100)}%\n"
+                   f"💸 Burn: ₦{loss:,.0f}/hr")
+            hermes.send_alert(msg)
+            print(f"{RED}⚡ ALERT SENT TO TELEGRAM{RESET}")
             
-            print(f"\n{CYAN}💤 CYCLE COMPLETE. SLEEPING...{RESET}")
-            time.sleep(60)
+        return True
+    return False
 
-        except KeyboardInterrupt:
-            print(f"\n{RED}🛑 SENTINEL MODE DEACTIVATED.{RESET}")
-            break
+def scan_finance(ticker):
+    print(f"{YELLOW}💰 ANALYZING MARKET: {ticker}...{RESET}")
+    market_data = midas.get_asset_health(ticker)
+    
+    if market_data:
+        print(f"   Price: ${market_data['price']:,.2f}")
+        print(f"   Panic: {market_data['panic_score']:.1f}%")
+        
+        # 🚨 TRIGGER: MARKET CRASH ALERT
+        if market_data['panic_score'] > 80:
+            msg = (f"🚨 *MARKET CRASH WARNING*\n"
+                   f"📉 Asset: {ticker}\n"
+                   f"💥 Panic Score: {market_data['panic_score']:.0f}%\n"
+                   f"💰 Price: ${market_data['price']:,.2f}")
+            hermes.send_alert(msg)
+            print(f"{RED}⚡ ALERT SENT TO TELEGRAM{RESET}")
+            
+        return True
+    return False
+
+def manual_mode():
+    while True:
+        target = input(f"\n{GREEN}root@omnix:~$ ENTER TARGET > {RESET}")
+        if target.lower() == 'menu': break
+        
+        if "=" in target or "-" in target:
+            scan_finance(target.upper())
+        else:
+            scan_traffic(target)
+
+def main_menu():
+    while True:
+        ui.os.system('cls' if ui.os.name == 'nt' else 'clear')
+        print(f"\n{CYAN}:: UNIVERSAL MATRIX PROTOCOL (CONNECTED) ::{RESET}")
+        print(f"{GREEN}[1] ACTIVATE SENTINEL (Auto-Alerts){RESET}")
+        print(f"{GREEN}[2] MANUAL SCAN{RESET}")
+        
+        choice = input(f"\n{CYAN}SELECT > {RESET}")
+        
+        if choice == "1":
+            try:
+                while True:
+                    for target in SECTORS:
+                        if target['type'] == 'traffic': scan_traffic(target['id'])
+                        elif target['type'] == 'finance': scan_finance(target['id'])
+                        print(f"\n{GREEN}>> NEXT SCAN IN 5s...{RESET}")
+                        time.sleep(5)
+            except KeyboardInterrupt: break
+        elif choice == "2":
+            manual_mode()
 
 if __name__ == "__main__":
-    activate_sentinel()
+    main_menu()
