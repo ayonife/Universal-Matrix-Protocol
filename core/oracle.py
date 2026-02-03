@@ -14,7 +14,7 @@ class OracleCore:
             [0.4,  0.0, -0.5,  0.8]
         ])
 
-    # THIS IS THE CRITICAL FIX: IT NOW ACCEPTS 'b_data'
+    # FIXED: Accepts 'b_data' so the error stops
     def sync_senses(self, t_data, f_data, e_data, b_data):
         t = t_data.get('congestion', 0)
         f = f_data.get('panic_score', 0) / 100.0
