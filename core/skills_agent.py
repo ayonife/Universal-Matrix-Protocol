@@ -3,36 +3,76 @@ import time
 
 class SkillsAgent:
     def __init__(self):
-        # REAL JOBS scraped from Lagos market (Feb 2026)
+        # REAL JOBS with REQUIRED SKILLS
         self.real_jobs = [
-            {"role": "Python Trainee (Intern)", "company": "Bincom Dev Center", "location": "Lagos", "salary": "₦80k - ₦120k", "link": "https://bincom.net/trainee"},
-            {"role": "Data Analyst Entry Level", "company": "Kuda Bank", "location": "Lagos (Hybrid)", "salary": "₦250k - ₦400k", "link": "https://kuda.com/careers"},
-            {"role": "Junior Backend Eng", "company": "Moniepoint", "location": "Lekki", "salary": "₦500k+", "link": "https://moniepoint.com/careers"},
-            {"role": "IT Support Intern", "company": "Dangote Group", "location": "Ikoyi", "salary": "₦150k", "link": "#"},
-            {"role": "AI Research Intern", "company": "Omnix Labs", "location": "Yaba", "salary": "₦200k", "link": "#"}
+            {
+                "id": "J01", "role": "Python Intern", "company": "Bincom Dev Center", 
+                "salary": "₦120k", "link": "https://bincom.net/trainee",
+                "req_skills": ["Python", "Git", "Basic SQL"],
+                "course_rec": "CS101: Intro to Programming"
+            },
+            {
+                "id": "J02", "role": "Data Analyst (Entry)", "company": "Kuda Bank", 
+                "salary": "₦350k", "link": "https://kuda.com/careers",
+                "req_skills": ["Excel", "SQL", "PowerBI"],
+                "course_rec": "STA202: Statistics & Probability"
+            },
+            {
+                "id": "J03", "role": "Cybersecurity Analyst", "company": "Interswitch", 
+                "salary": "₦500k", "link": "#",
+                "req_skills": ["Networking", "Linux", "Ethical Hacking"],
+                "course_rec": "CS304: Network Security"
+            }
         ]
 
     def verify_identity(self, nin_id):
-        # SIMULATION OF REAL VERIFICATION (We can't access NIMC legally)
-        time.sleep(2.0) # Fake "Connecting to Server..." delay
+        # SIMULATED DB LOOKUP
+        time.sleep(1.5)
         
-        # Valid Test IDs for Demo
+        # DEMO USER 1: The Architect (High Match)
         if nin_id == "11111111111":
-            return {"name": "Ayonife (Architect)", "status": "VERIFIED", "school": "LASUSTECH", "level": "200L Math"}
-        elif len(str(nin_id)) == 11 and nin_id.isdigit():
-            # For any other 11-digit number, pretend it's a student
-            return {"name": f"Student-{nin_id[-4:]}", "status": "VERIFIED", "school": "UNILAG", "level": "400L CS"}
-        else:
-            return None
+            return {
+                "name": "Ayonife (Architect)", 
+                "status": "VERIFIED", 
+                "school": "LASUSTECH", 
+                "level": "200L Math",
+                "skills": ["Python", "Git", "Networking", "Linux"] # Has most skills
+            }
+        
+        # DEMO USER 2: The Freshman (Low Match - Needs Advice)
+        elif nin_id == "22222222222":
+             return {
+                "name": "Chinedu (Fresher)", 
+                "status": "VERIFIED", 
+                "school": "LASUSTECH", 
+                "level": "100L CS",
+                "skills": ["Excel", "Basic Math"] # Needs to learn more
+            }
+            
+        return None
 
-    def fetch_certificates(self, nin_id):
-        # REALISTIC BADGES
-        return [
-            {"name": "Python Essentials 1", "issuer": "Cisco", "badge": "🐍"},
-            {"name": "CyberOps Associate", "issuer": "Cisco", "badge": "🛡️"},
-            {"name": "Data Analytics", "issuer": "Coursera/Google", "badge": "📊"}
-        ]
-
-    def match_jobs(self, user_certs):
-        # Return the Real Jobs list
-        return self.real_jobs
+    def match_jobs(self, user_skills):
+        # The Core "Matrix Matching" Logic
+        results = []
+        
+        for job in self.real_jobs:
+            reqs = set(job['req_skills'])
+            user = set(user_skills)
+            
+            # 1. Calculate Intersection (What they have)
+            has = user.intersection(reqs)
+            
+            # 2. Calculate Difference (The GAP)
+            missing = reqs.difference(user)
+            
+            # 3. Score
+            score = int((len(has) / len(reqs)) * 100)
+            
+            results.append({
+                "job": job,
+                "score": score,
+                "missing": list(missing)
+            })
+            
+        # Sort by best match
+        return sorted(results, key=lambda x: x['score'], reverse=True)
