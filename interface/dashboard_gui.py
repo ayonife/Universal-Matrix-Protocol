@@ -17,7 +17,7 @@ from core.news_agent import NewsAgent
 from core.bio_agent import BioMonitor
 
 # --- CONFIGURATION ---
-st.set_page_config(page_title="OMNIX v3.0", page_icon="🧿", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="OMNIX v3.1", page_icon="🧿", layout="wide", initial_sidebar_state="expanded")
 
 # --- ANIMATION LOADER ---
 def load_lottieurl(url):
@@ -36,15 +36,12 @@ def load_agents():
 
 grok, deepseek, midas, nepa, oracle, news_bot, bio_bot = load_agents()
 
-# --- COMMAND CENTER & THEME SWITCH ---
+# --- COMMAND CENTER ---
 with st.sidebar:
     st.markdown("## 🧿 COMMAND CENTER")
-    
-    # 1. THEME TOGGLE
     theme_mode = st.toggle("☀️ LIGHT MODE", value=False)
     
-    if lottie_ai:
-        st_lottie(lottie_ai, height=120, key="brain")
+    if lottie_ai: st_lottie(lottie_ai, height=120, key="brain")
     
     st.markdown("---")
     scan_mode = st.radio("📡 MODE", ["SENTINEL (Auto)", "MANUAL SCAN"])
@@ -57,35 +54,19 @@ with st.sidebar:
         st.rerun()
     refresh_rate = st.slider("Refesh Rate (s)", 5, 60, 10)
 
-# --- DYNAMIC CSS ENGINE ---
-# We define colors based on the toggle
+# --- DYNAMIC CSS ---
 if theme_mode:
-    # LIGHT MODE COLORS
-    bg_color = "#f0f2f6"
-    text_color = "#000000"
-    card_bg = "#ffffff"
-    sidebar_bg = "#e0e0e0"
-    accent = "#000000"
+    bg_color, text_color, card_bg, accent = "#f0f2f6", "#000000", "#ffffff", "#000000"
+    link_color = "#0000EE"
 else:
-    # DARK MODE COLORS (Default)
-    bg_color = "#0e1117"
-    text_color = "#00ff41"
-    card_bg = "#1a1a1a"
-    sidebar_bg = "#161616"
-    accent = "#00ff41"
+    bg_color, text_color, card_bg, accent = "#0e1117", "#00ff41", "#1a1a1a", "#00ff41"
+    link_color = "#00ff41"
 
-# INJECT CSS
 st.markdown(f"""
     <style>
-    /* 1. DYNAMIC BACKGROUND */
-    .stApp {{ 
-        background-color: {bg_color}; 
-        color: {text_color};
-        font-family: 'Courier New', monospace;
-        transition: background-color 0.5s ease;
-    }}
-
-    /* 2. RAINBOW HOVER ANIMATION (The "Lovely" Part) */
+    .stApp {{ background-color: {bg_color}; color: {text_color}; font-family: 'Courier New', monospace; transition: background-color 0.5s ease; }}
+    
+    /* RAINBOW HOVER */
     @keyframes chroma {{
         0% {{ border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }}
         20% {{ border-color: #ff00ff; box-shadow: 0 0 10px #ff00ff; }}
@@ -95,58 +76,28 @@ st.markdown(f"""
         100% {{ border-color: #ffff00; box-shadow: 0 0 10px #ffff00; }}
     }}
 
-    /* 3. METRIC CARDS */
     div[data-testid="stMetric"] {{ 
-        background-color: {card_bg}; 
-        border: 2px solid {accent}; 
-        padding: 15px; 
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        transition: transform 0.2s ease, border-color 0.5s ease;
+        background-color: {card_bg}; border: 2px solid {accent}; padding: 15px; border-radius: 12px;
+        transition: transform 0.2s ease;
     }}
-    
-    /* HOVER TRIGGER */
-    div[data-testid="stMetric"]:hover {{
-        transform: scale(1.05);
-        animation: chroma 2s infinite linear; /* THIS MAKES IT CHANGE COLORS RANDOMLY */
-        cursor: crosshair;
-    }}
+    div[data-testid="stMetric"]:hover {{ transform: scale(1.05); animation: chroma 2s infinite linear; cursor: crosshair; }}
 
-    /* 4. SIDEBAR */
-    section[data-testid="stSidebar"] {{ 
-        background-color: {sidebar_bg};
-        border-right: 2px solid {accent};
-    }}
-    
-    /* 5. TEXT COLORS */
-    h1, h2, h3, p, label, .stMarkdown {{ color: {text_color} !important; }}
-    div[data-testid="stMetricValue"] {{ color: {text_color} !important; font-size: 28px; }}
+    h1, h2, h3, p, label, .stMarkdown, div[data-testid="stMetricValue"] {{ color: {text_color} !important; }}
     div[data-testid="stMetricLabel"] {{ color: {accent} !important; }}
-
-    /* 6. BUTTONS */
-    .stButton button {{
-        background-color: {card_bg};
-        color: {text_color};
-        border: 1px solid {accent};
-        transition: all 0.3s ease;
-    }}
-    .stButton button:hover {{
-        animation: chroma 0.5s infinite linear; /* FAST COLOR FLASH */
-        color: {bg_color};
-        background-color: {text_color};
-    }}
+    
+    /* NEWS LINKS */
+    a {{ text-decoration: none; color: {link_color} !important; font-weight: bold; border-bottom: 1px dotted {accent}; }}
+    a:hover {{ color: #ff0055 !important; border-bottom: 1px solid #ff0055; }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- MAIN DASHBOARD ---
+# --- HEADER ---
 col_title, col_anim = st.columns([4, 1])
-with col_title:
-    st.markdown("# :: OMNIX PROTOCOL v3 ::")
+with col_title: st.markdown("# :: OMNIX PROTOCOL v3.1 ::")
 with col_anim:
     status_color = "#000000" if theme_mode else "#00ff41"
     st.markdown(f'<b style="color:{status_color}; font-size:20px;">● SYSTEM ONLINE</b>', unsafe_allow_html=True)
 
-# System Health
 col_health, col_status = st.columns([1, 3])
 with col_health: system_health = st.empty()
 with col_status: vector_display = st.empty()
@@ -165,6 +116,10 @@ with tab_finance:
     col1, col2 = st.columns(2)
     with col1: finance_price = st.empty()
     with col2: finance_panic = st.empty()
+    
+    st.markdown("---")
+    st.markdown("### 📰 LIVE INTELLIGENCE FEED")
+    news_feed_display = st.empty() # Placeholder for the list of links
 
 with tab_energy:
     energy_status = st.empty()
@@ -178,12 +133,8 @@ with tab_sim:
 
 # --- LIVE LOOP ---
 if st.button("🚀 ACTIVATE PROTOCOL"):
-    # Toast Logic
-    msgs = ["Connecting to Satellite...", "Handshake Secured...", "Decrypting Bio-Data..."]
-    for msg in msgs:
-        st.toast(msg, icon="🧿")
-        time.sleep(0.5)
-
+    st.toast("Connecting to Global News Feeds...", icon="🗞️")
+    
     while True:
         # Defaults
         t_data, f_data, e_data, b_data = {'congestion': 0}, {'panic_score': 0}, {'status': 'GRID ACTIVE'}, {'aqi': 50}
@@ -201,37 +152,41 @@ if st.button("🚀 ACTIVATE PROTOCOL"):
             traffic_header.info(f"📍 {addr}")
             traffic_load.metric("CONGESTION", f"{int(t_data.get('congestion',0)*100)}%", delta=f"{loss['cars_stuck']:,} Cars")
             traffic_burn.metric("MONEY BURN", f"₦ {loss['total_burn']:,.0f}/hr", delta="Lost Wealth", delta_color="inverse")
-            
-            map_data = pd.DataFrame({'lat': [lat], 'lon': [lng]})
-            map_display.map(map_data, zoom=12, size=60, color="#00ff41")
+            map_display.map(pd.DataFrame({'lat': [lat], 'lon': [lng]}), zoom=12, size=60, color="#00ff41")
         except: pass
 
-        # 2. FINANCE & BIO
+        # 2. FINANCE & NEWS (THE UPGRADE)
         try:
-            news = news_bot.scan_network()
-            real_panic = news['panic_factor'] * 100
+            news_data = news_bot.scan_network()
+            real_panic = news_data['panic_factor'] * 100
+            stories = news_data['stories']
+            
             bio = bio_bot.get_vital_signs()
             b_data = bio 
+            
             finance_price.metric("BTC PRICE", "$98,420")
-            finance_panic.metric("PANIC SCORE", f"{real_panic:.0f}%", delta=news['headline'][:20])
+            finance_panic.metric("SOCIAL PANIC", f"{real_panic:.0f}%", delta="Based on Live Sentiment")
+            
+            # RENDER CLICKABLE NEWS
+            news_html = ""
+            for story in stories:
+                # Add a clickable link with source tag
+                news_html += f"👉 **[{story['source']}]** [{story['title']}]({story['link']})\n\n"
+            
+            news_feed_display.markdown(news_html)
+            
             f_data = {'panic_score': real_panic}
         except: pass
 
-        # 3. ENERGY
+        # 3. ENERGY & ORACLE
         try:
             status = "OFF" if sim_blackout else "ON"
             e_data = {'status': 'GRID ACTIVE' if status == "ON" else 'BLACKOUT'}
-            if status == "OFF":
-                energy_status.metric("GRID STATUS", "🔴 COLLAPSE", delta="CRITICAL")
-            else:
-                energy_status.metric("GRID STATUS", "🟢 ONLINE", delta="STABLE")
-        except: pass
+            if status == "OFF": energy_status.metric("GRID STATUS", "🔴 COLLAPSE", delta="CRITICAL")
+            else: energy_status.metric("GRID STATUS", "🟢 ONLINE", delta="STABLE")
 
-        # 4. ORACLE
-        try:
             current_vector = oracle.sync_senses(t_data, f_data, e_data, b_data)
             health = oracle.get_system_health()
-            
             system_health.metric("SYSTEM INTEGRITY", f"{health:.1f}%", delta="Live Pulse")
             vector_display.code(f"S(t) = {current_vector}")
 
@@ -240,8 +195,7 @@ if st.button("🚀 ACTIVATE PROTOCOL"):
             if sim_traffic > 0: impact[0] = sim_traffic
             
             futures = oracle.simulate_future(steps=12, impact_override=impact)
-            future_df = pd.DataFrame(futures, columns=["Traffic", "Panic", "Energy", "Bio"])
-            sim_chart.area_chart(future_df, height=250)
+            sim_chart.area_chart(pd.DataFrame(futures, columns=["Traffic", "Panic", "Energy", "Bio"]), height=250)
             
         except Exception as e:
             st.error(f"Oracle Error: {e}")
