@@ -17,12 +17,30 @@ from core.bio_agent import BioMonitor
 # --- CONFIGURATION ---
 st.set_page_config(page_title="OMNIX PROTOCOL", page_icon="👁️", layout="wide", initial_sidebar_state="expanded")
 
-# --- CYBERPUNK CSS ---
+# --- HIGH VISIBILITY CSS ---
 st.markdown("""
     <style>
-    .stApp { background-color: #000000; color: #00ff41; font-family: 'Courier New', monospace; }
-    div[data-testid="stMetric"] { background-color: #111; border: 1px solid #333; }
-    div[data-testid="stMetricValue"] { font-size: 24px; color: #fff; }
+    /* Main Background - Deep Charcoal (Readable on Low Brightness) */
+    .stApp { background-color: #121212; color: #00ff41; font-family: 'Courier New', monospace; }
+    
+    /* Metrics Cards - Lighter Gray so they stand out */
+    div[data-testid="stMetric"] { 
+        background-color: #1e1e1e; 
+        border: 1px solid #333; 
+        padding: 15px; 
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    
+    /* Text Visibility */
+    div[data-testid="stMetricValue"] { font-size: 26px; color: #ffffff; font-weight: bold; }
+    div[data-testid="stMetricLabel"] { color: #00ff41; font-size: 14px; }
+    
+    /* Sidebar - Distinct from main area */
+    section[data-testid="stSidebar"] { background-color: #0a0a0a; border-right: 1px solid #333; }
+    
+    /* Tabs - High Contrast */
+    button[data-baseweb="tab"] { color: #00ff41; background-color: #1a1a1a; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -34,7 +52,6 @@ def load_agents():
 # --- COMMAND CENTER ---
 st.sidebar.title("🎛️ COMMAND CENTER")
 
-# *** THE FIX: MEMORY WIPE BUTTON ***
 if st.sidebar.button("⚠️ RESET BRAIN MEMORY"):
     st.cache_resource.clear()
     st.rerun()
@@ -130,7 +147,7 @@ if st.button("🚀 RELOAD SYSTEM"):
 
         # 4. ORACLE (BRAIN)
         try:
-            # BACK TO 'sync_senses' (Server will recognize this once cache is cleared)
+            # Nuclear Fix '*args' handles inputs safely
             current_vector = oracle.sync_senses(t_data, f_data, e_data, b_data)
             health = oracle.get_system_health()
             
