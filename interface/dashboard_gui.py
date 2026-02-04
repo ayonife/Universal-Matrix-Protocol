@@ -18,7 +18,7 @@ from core.news_agent import NewsAgent
 from core.bio_agent import BioMonitor
 from core.skills_agent import SkillsAgent
 
-st.set_page_config(page_title="OMNIX v5.1 (Linked)", page_icon="🧿", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="OMNIX v6.0 (Realism)", page_icon="🧿", layout="wide")
 
 @st.cache_resource
 def load_agents():
@@ -26,25 +26,45 @@ def load_agents():
 
 grok, deepseek, midas, nepa, oracle, news_bot, bio_bot, skills_bot = load_agents()
 
+# *** THE CHROMA-SHIFT ANIMATION ***
 st.markdown("""
     <style>
-    .stApp { background-color: #0e1117; color: #00ff41; font-family: 'Courier New'; }
-    div[data-testid="stMetric"] { background-color: #1a1a1a; border: 1px solid #00ff41; border-radius: 5px; }
+    /* ANIMATED BACKGROUND */
+    @keyframes colorChange {
+        0% { background-color: #000000; }
+        25% { background-color: #0a0a20; }
+        50% { background-color: #001000; }
+        75% { background-color: #100000; }
+        100% { background-color: #000000; }
+    }
+    
+    .stApp {
+        animation: colorChange 20s infinite alternate;
+        color: #e0e0e0;
+        font-family: 'Courier New';
+    }
+
+    /* NEON BORDERS */
+    div[data-testid="stMetric"] {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(0, 255, 65, 0.5);
+        border-radius: 8px;
+        backdrop-filter: blur(5px);
+    }
     </style>
     """, unsafe_allow_html=True)
 
 with st.sidebar:
-    st.title("🧿 OMNIX PROTOCOL")
-    st.markdown("---")
-    app_mode = st.radio("SELECT SYSTEM:", ["🏙️ CITY OPERATIONS", "👤 CITIZEN PORTAL"])
+    st.title("🧿 OMNIX")
+    app_mode = st.radio("SYSTEM ACCESS:", ["🏙️ OPS CENTER", "👤 CITIZEN DB"])
     
     def load_lottieurl(url):
         try: return requests.get(url).json()
         except: return None
     lottie = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_V9t630.json")
-    if lottie: st_lottie(lottie, height=100)
+    if lottie: st_lottie(lottie, height=80)
 
-if app_mode == "🏙️ CITY OPERATIONS":
+if app_mode == "🏙️ OPS CENTER":
     city_ops.render(grok, deepseek, midas, nepa, oracle, news_bot, bio_bot)
 else:
     citizen_portal.render(skills_bot)
